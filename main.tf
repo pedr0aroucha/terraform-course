@@ -19,7 +19,7 @@ resource "aws_instance" "dev" {
     Name = "dev${count.index}"
   }
 
-  vpc_security_group_ids = ["${aws_security_group.acesso-ssh.id}", "sg-0cbce4d4050554cc9"]
+  vpc_security_group_ids = ["${aws_security_group.acesso-ssh.id}"]
 }
 
 resource "aws_s3_bucket" "dev4" {
@@ -40,7 +40,7 @@ resource "aws_instance" "dev4" {
     Name = "dev4"
   }
 
-  vpc_security_group_ids = ["${aws_security_group.acesso-ssh.id}", "sg-0cbce4d4050554cc9"]
+  vpc_security_group_ids = ["${aws_security_group.acesso-ssh.id}"]
 
   depends_on = [
     aws_s3_bucket.dev4
@@ -56,7 +56,7 @@ resource "aws_instance" "dev5" {
     Name = "dev5"
   }
 
-  vpc_security_group_ids = ["${aws_security_group.acesso-ssh.id}", "sg-0cbce4d4050554cc9"]
+  vpc_security_group_ids = ["${aws_security_group.acesso-ssh.id}"]
 }
 
 resource "aws_instance" "dev6" {
@@ -69,5 +69,27 @@ resource "aws_instance" "dev6" {
     Name = "dev6"
   }
 
-  vpc_security_group_ids = ["${aws_security_group.acesso-ssh-us-east-2.id}", "sg-0cbce4d4050554cc9"]
+  vpc_security_group_ids = ["${aws_security_group.acesso-ssh-us-east-2.id}"]
+
+  depends_on = [
+    aws_dynamodb_table.dynamodb-homologacao
+  ]
+}
+
+resource "aws_dynamodb_table" "dynamodb-homologacao" {
+  provider     = aws.us-east-2
+  name         = "GameScore"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "UserId"
+  range_key    = "GameTile"
+
+  attribute {
+    name = "UserId"
+    type = "S"
+  }
+
+  attribute {
+    name = "GameTile"
+    type = "S"
+  }
 }
